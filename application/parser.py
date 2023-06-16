@@ -56,7 +56,7 @@ class ResumeParser():
 
         estimated_prompt_tokens = num_tokens_from_string(prompt, engine)
         estimated_answer_tokens = (max_tokens - estimated_prompt_tokens)
-        self.logger.info(f'Tokens: {estimated_prompt_tokens} + {estimated_answer_tokens} = {max_tokens}')
+        print(f'Tokens: {estimated_prompt_tokens} + {estimated_answer_tokens} = {max_tokens}')
 
         response = openai.Completion.create(
         engine=engine,
@@ -77,15 +77,23 @@ class ResumeParser():
         """
         resume = {}
         pdf_str = self.pdf2string(pdf_path)
-        print(pdf_str)
+        # print(pdf_str)
         prompt = self.prompt_questions + '\n' + pdf_str
+        print(f'Prompt: {prompt}')
 
         # Reference: https://platform.openai.com/docs/models/gpt-3-5
         engine = 'text-davinci-002'
         max_tokens = 4097
+        # engine = 'davinci'
+        # max_tokens = 2049
+        # engine = 'code-davinci-002' # The model: `code-davinci-002` does not exist
+        # max_tokens = 8001
+        print(f'Model: {engine}, Max Tokens: {max_tokens}')
 
         response = self.query_completion(prompt,engine=engine,max_tokens=max_tokens)
+        print(f'Response: {response}')
         response_text = response['choices'][0]['text'].strip()
-        print(response_text)
+        print(f'Response Text: {response_text}')
+
         resume = json.loads(response_text)
         return resume
